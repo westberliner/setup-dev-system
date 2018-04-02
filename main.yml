@@ -1,0 +1,13 @@
+---
+
+- hosts: all
+  roles:
+    - brew
+    - dns
+    - db
+    - webserver-php
+    - docker
+    - web-tools
+    - vim
+    - oh-my-zsh
+
