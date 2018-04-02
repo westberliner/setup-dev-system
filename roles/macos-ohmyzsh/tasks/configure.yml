@@ -1,0 +1,22 @@
+---
+- name: Installing oh-my-zsh
+  git:
+    repo: "https://github.com/robbyrussell/oh-my-zsh.git"
+    dest: "{{ ansible_env.HOME + '/.oh-my-zsh' }}"
+    update: yes
+  register: macos_ohmyzsh_git_result
+  changed_when: "macos_ohmyzsh_git_result.after|default('after') != macos_ohmyzsh_git_result.before|default('before')"
+
+- name: Setting default shell
+  become: true
+  shell: "chsh -s $(which zsh) {{ ansible_user_id }}"
+  when: macos_ohmyzsh.default
+  register: chsh_result
+  changed_when: "'chsh: no changes made' not in chsh_result.stderr"
+
+- name: Configuring oh-my-zsh
+  template:
+    src: ".zshrc.j2"
+    dest: "{{ ansible_env.HOME + '/.zshrc' }}"
+    backup: yes
+  when: macos_ohmyzsh.configure

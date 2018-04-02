@@ -2,7 +2,8 @@ Setup Mac for Development
 =========================
 
 * cp hosts.example
-* run ansible-playbook main.yml
+* ansible-galaxy install -r requirements.yml 
+* ansible-playbook -i hosts main.yml --ask-become-pass 
 
 
 TODO

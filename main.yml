@@ -1,13 +1,11 @@
 ---
-
 - hosts: all
   roles:
-    - brew
-    - dns
-    - db
-    - webserver-php
-    - docker
+    - dotstrap.xcode
+    - {role: geerlingguy.homebrew, homebrew_cask_apps: {}}
     - web-tools
+    - webserver-php
+    - db
+    - docker
     - vim
-    - oh-my-zsh
 

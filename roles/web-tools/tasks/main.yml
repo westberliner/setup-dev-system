@@ -1,2 +1,39 @@
 ---
 # tasks file for web-tools
+- name: ensure homebrew is updated
+  homebrew:
+    state: latest
+    update_homebrew: yes
+
+- name: install npm
+  homebrew:
+    name: npm
+    state: latest
+
+- name: install wget
+  homebrew:
+    name: wget
+    state: latest
+
+- name: install nmap
+  homebrew:
+    name: nmap
+    state: latest
+
+- name: install ansible
+  homebrew:
+    name: ansible
+    state: latest
+
+- name: install zsh
+  homebrew:
+    name: zsh
+    state: latest
+
+- name: install zsh-completions
+  homebrew:
+    name: zsh-completions
+    state: latest
+
+- include_role:
+    name: macos-ohmyzsh
