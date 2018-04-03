@@ -1,8 +1,8 @@
 ---
 - hosts: all
   roles:
-    - dotstrap.xcode
-    - {role: geerlingguy.homebrew, homebrew_cask_apps: {}}
+    #    - dotstrap.xcode
+    #- {role: geerlingguy.homebrew, homebrew_cask_apps: {}}
     - web-tools
     - webserver-php
     - db

@@ -1,3 +1,4 @@
 ---
 - name: dotstrap.xcode
 - name: geerlingguy.homebrew
+- name: ctorgalson.janus

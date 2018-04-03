@@ -35,5 +35,27 @@
     name: zsh-completions
     state: latest
 
+- name: install vim
+  homebrew:
+    name: vim
+    state: latest
+
+- name: install bundler
+  #  become: yes
+  gem:
+    name: bundler
+
+- name: install sass
+  #  become: yes
+  gem:
+    name: sass
+
 - include_role:
     name: macos-ohmyzsh
+
+- include_role:
+    name: ctorgalson.janus
+
+- git:
+    repo: 'https://github.com/sickill/vim-monokai.git'
+    dest: '{{ ansible_env.HOME }}/.janus/vim-monokai'
