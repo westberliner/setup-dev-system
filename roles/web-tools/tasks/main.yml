@@ -7,8 +7,15 @@
 
 - name: install npm
   homebrew:
-    name: npm
+    name: node
     state: latest
+
+- name: Install grunt
+  environment:
+    PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
+  npm:
+    name: grunt
+    global: yes
 
 - name: install wget
   homebrew:
