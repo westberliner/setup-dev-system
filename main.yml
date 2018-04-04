@@ -39,5 +39,6 @@
       composer_packages: {},
       pip_packages: {}
     }
-    - webserver-php
-
+    - {
+      role: webserver-php
+    }

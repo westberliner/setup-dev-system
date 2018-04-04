@@ -1,2 +1,11 @@
 ---
 # defaults file for webserver-php
+homebrew_installed_packages: [
+  dnsmasq,
+  mariadb,
+  httpd
+]
+php56_extensions: []
+php70_extensions: []
+php71_extensions: []
+php72_extensions: []

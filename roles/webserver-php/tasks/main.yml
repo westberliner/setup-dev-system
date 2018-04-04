@@ -1,2 +1,13 @@
 ---
 # tasks file for webserver-php
+# install packages
+# install php
+# add resolver
+# add dnsmasq config
+# add apache config
+# generate ssl
+# add ca to keychain
+# create fcgi
+# add documents folder
+# add adminer
+# add testfolder
