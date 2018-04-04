@@ -1,2 +1,6 @@
 ---
 # defaults file for web-tools
+npm_packages: {}
+gem_packages: {}
+composer_packages: {}
+pip_packages: {}

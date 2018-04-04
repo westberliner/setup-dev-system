@@ -1,2 +1,26 @@
 ---
 # tasks file for vim
+- name: install vim
+  homebrew:
+    name: vim
+    state: latest
+
+- name: install ag
+  homebrew:
+    name: ag
+    state: latest
+
+- include_role:
+    name: ctorgalson.janus
+
+- name: Install vim plugins
+  git:
+    repo: "https://github.com/{{ item.vendor | default(item) }}/{{ item.name | default(item) }}"
+    dest: '{{ ansible_env.HOME }}/.janus/{{ item.name | default(item) }}'
+  with_items: "{{ packages }}"
+
+- name: copy basic vim settings
+  copy:
+    src: .vimrc.after
+    dest: "{{ ansible_env.HOME }}/.vimrc.after"
+    force: no

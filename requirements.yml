@@ -2,3 +2,4 @@
 - name: dotstrap.xcode
 - name: geerlingguy.homebrew
 - name: ctorgalson.janus
+- name: igor_mukhin.sublimetext3_packagecontrol

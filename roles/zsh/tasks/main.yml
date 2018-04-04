@@ -1,0 +1,19 @@
+---
+# tasks file for zsh
+- name: ensure homebrew is updated
+  homebrew:
+    state: latest
+    update_homebrew: yes
+
+- name: install zsh
+  homebrew:
+    name: zsh
+    state: latest
+
+- name: install zsh-completions
+  homebrew:
+    name: zsh-completions
+    state: latest
+
+- include_role:
+    name: macos-ohmyzsh
