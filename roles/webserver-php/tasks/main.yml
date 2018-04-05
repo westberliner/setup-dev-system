@@ -1,7 +1,63 @@
 ---
 # tasks file for webserver-php
 # install packages
-# install php
+# - name: Install brew webserver elements
+#   homebrew:
+#     name: "{{ item.name | default(item) }}"
+#   with_items: "{{ homebrew_installed_packages }}"
+
+# update channel
+- name: update pecl channel 5.6
+  shell: "/usr/local/opt/php@5.6/bin/pecl channel-update pecl.php.net"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('is up to date' in pecl_result.stdout) or ('succeeded' in pecl_result.stdout))"
+
+# install php packages
+- name: Install php5.6 extensions
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "/usr/local/opt/php@5.6/bin/pecl install {{ item.name }}"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ php56_extensions }}"
+
+- name: Install php7.0 extensions
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "/usr/local/opt/php@7.0/bin/pecl install {{ item.name }}"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ php70_extensions }}"
+
+- name: Install php7.1 extensions
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "/usr/local/opt/php@7.1/bin/pecl install {{ item.name }}"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ php71_extensions }}"
+
+- name: Install php7.2 extensions
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "/usr/local/opt/php@7.2/bin/pecl install {{ item.name }}"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ php72_extensions }}"
+
+# pecl download mongo
+# phpize --clean
+# phpize
+# ./configure --with-openssl-dir=/usr/local/opt/openssl --with-php-config=
+# make
+# make install
+
+# set php version symlinks
 # add resolver
 # add dnsmasq config
 # add apache config
