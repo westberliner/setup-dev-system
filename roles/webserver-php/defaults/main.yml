@@ -10,7 +10,8 @@ homebrew_installed_packages: [
   { name: php@7.1 },
   { name: php@7.2 },
   { name: autoconf },
-  { name: pkg-config }
+  { name: pkg-config },
+  { name: gnu-sed }
 ]
 php56_extensions: [
   { name: pecl_http-2.6.0 },
