@@ -6,18 +6,23 @@
     name: "{{ item.name | default(item) }}"
   with_items: "{{ homebrew_installed_packages }}"
 
-# update channel
-- name: update pecl channel 5.6
-  shell: "/usr/local/opt/php@5.6/bin/pecl channel-update pecl.php.net"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('is up to date' in pecl_result.stdout) or ('succeeded' in pecl_result.stdout))"
+- name: Install brew php versions
+  homebrew:
+    name: "{{ item.name | default(item) }}"
+  with_items: "{{ php_valid_options }}"
 
 - name: Check brew list
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   register: "brew_list"
-  command: "brew list"
+  command: "ls /usr/local/opt"
+
+- name: create php7.2 symlink for more consistency
+  file:
+    src: "/usr/local/opt/php"
+    dest: "/usr/local/opt/php@7.2"
+    state: link
+  when: "'php@7.2' in brew_list.stdout"
 
 # copy shell script for compiling mongo ext
 - name: copy compiling mongo ext script
@@ -26,118 +31,12 @@
     dest: "/tmp/."
 
 # install php packages
-- name: Install php5.6 extensions
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "/usr/local/opt/php@5.6/bin/pecl install {{ item.name }}"
-  when: "'php@5.6' in brew_list.stdout"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
-  with_items: "{{ php56_extensions }}"
-
-- name: Check php@5.6 mongo ext
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  register: "php_56_ext"
-  command: "/usr/local/opt/php@5.6/bin/php -m"
-
-- name: compile mongo ext for php5.6
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "sh /tmp/buildmongoext.sh 5.6"
-  when: "not 'mongo' in php_56_ext.stdout"
-
-# update channel
-- name: update pecl channel 7.0
-  shell: "/usr/local/opt/php@7.0/bin/pecl channel-update pecl.php.net"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('is up to date' in pecl_result.stdout) or ('succeeded' in pecl_result.stdout))"
-
-- name: Install php7.0 extensions
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "/usr/local/opt/php@7.0/bin/pecl install {{ item.name }}"
-  when: "'php@7.0' in brew_list.stdout"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
-  with_items: "{{ php70_extensions }}"
-
-# install mongodb
-- name: Check php@7.0 mongo ext
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  register: "php_70_ext"
-  command: "/usr/local/opt/php@7.0/bin/php -m"
-
-- name: compile mongo ext for php7.0
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "sh /tmp/buildmongoext.sh 7.0"
-  when: "not 'mongo' in php_70_ext.stdout"
-
-# update channel
-- name: update pecl channel 7.1
-  shell: "/usr/local/opt/php@7.1/bin/pecl channel-update pecl.php.net"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('is up to date' in pecl_result.stdout) or ('succeeded' in pecl_result.stdout))"
-
-- name: Install php7.1 extensions
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "/usr/local/opt/php@7.1/bin/pecl install {{ item.name }}"
-  when: "'php@7.1' in brew_list.stdout"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
-  with_items: "{{ php71_extensions }}"
-
-# install mongodb
-- name: Check php@7.1 mongo ext
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  register: "php_71_ext"
-  command: "/usr/local/opt/php@7.1/bin/php -m"
-
-- name: compile mongo ext for php7.1
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "sh /tmp/buildmongoext.sh 7.1"
-  when: "not 'mongo' in php_71_ext.stdout"
-
-# update channel
-- name: update pecl channel 7.2
-  shell: "/usr/local/opt/php@7.2/bin/pecl channel-update pecl.php.net"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('is up to date' in pecl_result.stdout) or ('succeeded' in pecl_result.stdout))"
-
-- name: Install php7.2 extensions
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "/usr/local/opt/php@7.2/bin/pecl install {{ item.name }}"
-  when: "'php@' in brew_list.stdout"
-  register: pecl_result
-  changed_when: "pecl_result.rc == 0"
-  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
-  with_items: "{{ php72_extensions }}"
-
-# install mongodb
-- name: Check php@7.2 mongo ext
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  register: "php_72_ext"
-  command: "/usr/local/opt/php@7.2/bin/php -m"
-
-- name: compile mongo ext for php7.2
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: "sh /tmp/buildmongoext.sh 7.2"
-  when: "not 'mongo' in php_72_ext.stdout"
-
+- name: install php extensions
+  include_tasks: php.yml
+  vars:
+    phpversion: "{{ item }}"
+  when: item.name in brew_list.stdout
+  with_items: "{{ php_valid_options }}"
 
 # cleanup
 - name: delete compiling mongo ext script
@@ -145,13 +44,14 @@
     state: absent
     path: "/tmp/buildmongoext.sh"
 
-# set php version symlinks
+# create fcgi
+
 # add resolver
 # add dnsmasq config
 # add apache config
 # generate ssl
 # add ca to keychain
-# create fcgi
+
 # add documents folder
 # add adminer
 # add testfolder

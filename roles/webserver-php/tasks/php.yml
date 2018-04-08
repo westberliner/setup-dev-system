@@ -1,0 +1,34 @@
+# update channel
+- name: update pecl channel
+  shell: "/usr/local/opt/{{ phpversion.name }}/bin/pecl channel-update pecl.php.net"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('is up to date' in pecl_result.stdout) or ('succeeded' in pecl_result.stdout))"
+
+- name: Install php extensions
+  environment:
+    PATH: "/usr/local/opt/{{ phpversion.name }}/bin:/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "pecl install {{ item.name }}"
+  register: pecl_result
+  changed_when: "pecl_result.rc == 0"
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ phpversion.extensions }}"
+
+- name: Check mongo ext
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  register: "php_extensions"
+  command: "/usr/local/opt/{{ phpversion.name }}/bin/php -m"
+
+- name: compile mongo ext for php
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "sh /tmp/buildmongoext.sh {{ phpversion.version }}"
+  when: "not 'mongo' in php_extensions.stdout"
+
+# set php version symlinks
+- name: create php symlinks for easy access
+  file:
+    src: '/usr/local/opt/{{ phpversion.name }}/bin/php'
+    dest: '/usr/local/bin/php{{ phpversion.shortname }}'
+    state: link

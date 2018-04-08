@@ -1,47 +1,50 @@
 ---
 - hosts: all
   roles:
-    - { role: dotstrap.xcode, xcode_colorthemes: {} }
-    - {
-      role: geerlingguy.homebrew,
-      homebrew_installed_packages: [
-        { name: node },
-        { name: wget },
-        { name: nmap },
-        { name: ansible }
-      ],
-      homebrew_cask_apps: [
-        docker,
-        #sublime-text,
-        #virtualbox,
-        #virtualbox-extension-pack
-      ]
-    }
-    - zsh
-    - {
-      role: vim,
-      packages: [
-        { name: vim-monokai, vendor: sickill },
-        { name: vim-multiple-cursors, vendor: terryma },
-        { name: YouCompleteMe, vendor: Valloric },
-        { name: vim-ags, vendor: gabesoft }
-      ]
-    }
-    - {
-      role: web-tools,
-      brew_packages: [
-        { name: phantomjs }
-      ],
-      npm_packages: [
-        { name: grunt }
-      ],
-      gem_packages: [
-        { name: bundler },
-        { name: sass }
-      ],
-      composer_packages: {},
-      pip_packages: {}
-    }
+    # - { role: dotstrap.xcode, xcode_colorthemes: {} }
+    # - {
+    #   role: geerlingguy.homebrew,
+    #   homebrew_installed_packages: [
+    #     { name: node },
+    #     { name: wget },
+    #     { name: nmap },
+    #     { name: ansible }
+    #   ],
+    #   homebrew_taps: [
+    #     kabel/php-ext
+    #   ]
+    #   homebrew_cask_apps: [
+    #     #docker,
+    #     #sublime-text,
+    #     #virtualbox,
+    #     #virtualbox-extension-pack
+    #   ]
+    # }
+    # - zsh
+    # - {
+    #   role: vim,
+    #   packages: [
+    #     { name: vim-monokai, vendor: sickill },
+    #     { name: vim-multiple-cursors, vendor: terryma },
+    #     { name: YouCompleteMe, vendor: Valloric },
+    #     { name: vim-ags, vendor: gabesoft }
+    #   ]
+    # }
+    # - {
+    #   role: web-tools,
+    #   brew_packages: [
+    #     { name: phantomjs }
+    #   ],
+    #   npm_packages: [
+    #     { name: grunt }
+    #   ],
+    #   gem_packages: [
+    #     { name: bundler },
+    #     { name: sass }
+    #   ],
+    #   composer_packages: {},
+    #   pip_packages: {}
+    # }
     - {
       role: webserver-php
     }
