@@ -30,6 +30,35 @@
     src: buildmongoext.sh
     dest: "/tmp/."
 
+# create htdocs structure
+- name: Create htdocs with test folder
+  file:
+    path: /Users/Shared/htdocs/www/test
+    state: directory
+
+- name: Create htdocs with adminer
+  file:
+    path: /Users/Shared/htdocs/www/adminer
+    state: directory
+
+- name: Create htdocs with cgi folder
+  file:
+    path: /Users/Shared/htdocs/fcgi
+    state: directory
+
+- name: Create htdocs with scripts folder
+  file:
+    path: /Users/Shared/htdocs/scripts
+    state: directory
+
+# create start/stop scripts
+- name: copy server script
+  copy:
+    src: "{{ item }}"
+    dest: "/Users/Shared/htdocs/scripts/."
+  with_items: [startserver.sh, stopserver.sh]
+
+
 # install php packages
 - name: install php extensions
   include_tasks: php.yml
@@ -44,14 +73,44 @@
     state: absent
     path: "/tmp/buildmongoext.sh"
 
-# create fcgi
+# symlink www folder
+- name: create www symlink into homefolder
+  file:
+    src: "/Users/Shared/htdocs/www"
+    dest: "{{ ansible_env.HOME }}/www"
+    state: link
 
 # add resolver
+- name: Create resolver
+  become: yes
+  file:
+    path: /etc/resolver
+    state: directory
+
+- name: copy compiling mongo ext script
+  become: yes
+  copy:
+    content: "nameserver 127.0.0.1"
+    dest: "/etc/resolver/devl"
+
 # add dnsmasq config
+- name: Check dnsmasq config
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  register: "dnsmasqconf"
+  command: bash -c "cat /usr/local/etc/dnsmasq.conf | grep devl"
+  ignore_errors: True
+
+- name: append devl dns config
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: gsed -i "1iaddress=\/devl\/127\.0\.0\.1" /usr/local/etc/dnsmasq.conf
+  when: "dnsmasqconf.stdout == ''"
+
 # add apache config
 # generate ssl
 # add ca to keychain
-
-# add documents folder
+# mariadb secure install
 # add adminer
 # add testfolder
+# with phpinfo / htaccess

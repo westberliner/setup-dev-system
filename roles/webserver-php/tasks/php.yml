@@ -32,3 +32,9 @@
     src: '/usr/local/opt/{{ phpversion.name }}/bin/php'
     dest: '/usr/local/bin/php{{ phpversion.shortname }}'
     state: link
+
+# create fcgi file
+- name: create fcgi script
+  template:
+    src: fcgi_template.fcgi.j2
+    dest: /Users/Shared/htdocs/fcgi/php{{ phpversion.shortname }}.fcgi
