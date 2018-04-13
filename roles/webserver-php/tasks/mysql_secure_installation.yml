@@ -1,0 +1,29 @@
+---
+
+# create root .my.cnf config file
+- name: Add .my.cnf
+  copy:
+    src: my.extended.cnf
+    dest: /usr/local/etc/my.cnf.d/.
+
+# start mysql server
+- name: start db server
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: brew services start mariadb
+
+
+- name: copy silent mysql_secure_installation.sh
+  copy:
+    src: mysql_secure_installation.sh
+    dest: "/tmp/."
+
+- name: execute mysql installation
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: sh /tmp/mysql_secure_installation.sh
+
+- name: remove silent mysql_secure_installation.sh
+  file:
+    path: /tmp/mysql_secure_installation.sh
+    state: absent

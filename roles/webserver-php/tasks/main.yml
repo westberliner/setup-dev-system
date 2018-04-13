@@ -17,6 +17,10 @@
   register: "brew_list"
   command: "ls /usr/local/opt"
 
+- name: mysql secure installation
+  include_tasks: mysql_secure_installation.yml
+  when: mariadb in brew_list.stdout
+
 - name: create php7.2 symlink for more consistency
   file:
     src: "/usr/local/opt/php"
