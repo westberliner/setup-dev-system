@@ -22,7 +22,7 @@
     src: "/usr/local/opt/php"
     dest: "/usr/local/opt/php@7.2"
     state: link
-  when: "'php@7.2' in brew_list.stdout"
+  when: "'php' in brew_list.stdout"
 
 # copy shell script for compiling mongo ext
 - name: copy compiling mongo ext script
@@ -33,39 +33,34 @@
 # create htdocs structure
 - name: Create htdocs with test folder
   file:
-    path: /Users/Shared/htdocs/www/test
+    path: /Users/Shared/www/test
     state: directory
 
 - name: Create htdocs with adminer
   file:
-    path: /Users/Shared/htdocs/www/adminer
-    state: directory
-
-- name: Create htdocs with cgi folder
-  file:
-    path: /Users/Shared/htdocs/fcgi
+    path: /Users/Shared/www/adminer
     state: directory
 
 - name: Create htdocs with scripts folder
   file:
-    path: /Users/Shared/htdocs/scripts
+    path: /Users/Shared/scripts
     state: directory
 
 # create start/stop scripts
 - name: copy server script
   copy:
     src: "{{ item }}"
-    dest: "/Users/Shared/htdocs/scripts/."
+    dest: "/Users/Shared/scripts/."
   with_items: [startserver.sh, stopserver.sh]
 
 
 # install php packages
 - name: install php extensions
   include_tasks: php.yml
-  vars:
-    phpversion: "{{ item }}"
   when: item.name in brew_list.stdout
-  with_items: "{{ php_valid_options }}"
+  loop: "{{ php_valid_options }}"
+  loop_control:
+    loop_var: phpversion
 
 # cleanup
 - name: delete compiling mongo ext script
@@ -76,7 +71,7 @@
 # symlink www folder
 - name: create www symlink into homefolder
   file:
-    src: "/Users/Shared/htdocs/www"
+    src: "/Users/Shared/www"
     dest: "{{ ansible_env.HOME }}/www"
     state: link
 
@@ -108,9 +103,35 @@
   when: "dnsmasqconf.stdout == ''"
 
 # add apache config
+- name: copy server script
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/local/etc/httpd/extra/."
+  with_items: [httpd-cgi.conf, httpd-vhosts.conf]
+
+- name: copy httpd conf
+  template:
+    src: httpd.conf.j2
+    dest: /usr/local/etc/httpd/httpd.conf
+
+# add adminer
+- name: Download adminer
+  get_url:
+    url: https://www.adminer.org/latest-mysql-en.php
+    dest: /Users/Shared/www/adminer/index.php
+    force_basic_auth: yes
+
+# add phpinfo to test folder
+- name: create index
+  copy:
+    content: "<?php phpinfo(); ?>"
+    dest: "/Users/Shared/www/test/index.php"
+
+- name: add htaccess
+  copy:
+    content: "AddHandler application/php56 .php\n#AddHandler application/php70 .php\n#AddHandler application/php71 .php\n#AddHandler application/php72 .php"
+    dest: "/Users/Shared/www/test/.htaccess"
+
 # generate ssl
 # add ca to keychain
 # mariadb secure install
-# add adminer
-# add testfolder
-# with phpinfo / htaccess

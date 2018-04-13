@@ -1,4 +1,4 @@
 brew services stop mongodb
 brew services stop mariadb
-brew services stop httpd
+sudo brew services stop httpd
 brew services stop dnsmasq

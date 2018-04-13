@@ -37,4 +37,5 @@
 - name: create fcgi script
   template:
     src: fcgi_template.fcgi.j2
-    dest: /Users/Shared/htdocs/fcgi/php{{ phpversion.shortname }}.fcgi
+    dest: /usr/local/var/www/cgi-bin/php{{ phpversion.shortname }}.fcgi
+    mode: 0755
