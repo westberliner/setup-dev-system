@@ -22,6 +22,8 @@
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   shell: sh /tmp/mysql_secure_installation.sh
+  register: mysql_installation_result
+  failed_when: "((mysql_installation_result is failed) and ('Access denied for user' not in mysql_installation_result.stderr))"
 
 - name: remove silent mysql_secure_installation.sh
   file:
