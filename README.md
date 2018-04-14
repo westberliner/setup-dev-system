@@ -6,8 +6,3 @@ Setup Mac for Development
 * ansible-playbook -i hosts main.yml --ask-become-pass 
 * /Users/Shared/scripts/startserver.sh
 
-
-TODO
-----
-
-* everything
