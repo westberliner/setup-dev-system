@@ -8,7 +8,8 @@ homebrew_installed_packages: [
   { name: httpd },
   { name: autoconf },
   { name: pkg-config },
-  { name: gnu-sed }
+  { name: gnu-sed },
+  { name: nss }
 ]
 
 php_valid_options: [

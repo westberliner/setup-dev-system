@@ -1,0 +1,96 @@
+# generate ssl
+- name: Create ssl certs
+  file:
+    path: /usr/local/var/certs
+    state: directory
+
+- name: copy openssl-san config
+  copy:
+    src: openssl-san.cnf
+    dest: /usr/local/etc/openssl/.
+
+- name: copy ext config
+  copy:
+    src: ext-san.cnf
+    dest: /usr/local/etc/openssl/.
+
+# generate ca
+# Generate CA private key
+- name: Generate a ca key
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "openssl genrsa -out ca.key 2048"
+  args:
+    creates: "/usr/local/var/certs/ca.key"
+    chdir: /usr/local/var/certs
+
+# Create Certificate Signing Request
+- name: Generate a ca csr
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: openssl req -new -key ca.key -out ca.csr \
+    -subj "/C=DE/ST=Berlin/L=Berlin/O=dev/CN=digital"
+  args:
+    creates: "/usr/local/var/certs/ca.csr"
+    chdir: /usr/local/var/certs
+
+# Create ca self-signed certificate
+- name: sign a ca csr
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "openssl x509 -req -days 3650 \
+    -in ca.csr \
+    -out ca.crt \
+    -signkey ca.key"
+  args:
+    creates: "/usr/local/var/certs/ca.crt"
+    chdir: /usr/local/var/certs
+
+# create cert
+- name: Generate a cert key
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: "openssl genrsa -out wildcard.ssl.devl.key 2048"
+  args:
+    creates: "/usr/local/var/certs/wildcard.ssl.devl.key"
+    chdir: /usr/local/var/certs
+
+- name: Generate a cert csr
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: openssl req -new -key wildcard.ssl.devl.key -out wildcard.ssl.devl.csr \
+    -extensions v3_req \
+    -config /usr/local/etc/openssl/openssl-san.cnf
+  args:
+    creates: "/usr/local/var/certs/wildcard.ssl.devl.csr"
+    chdir: /usr/local/var/certs
+
+- name: sign a Self Signed OpenSSL certificate
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: OPENSSL_CONF=/usr/local/etc/openssl/openssl-san.cnf openssl x509 -req \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -extfile /usr/local/etc/openssl/ext-san.cnf \
+    -in wildcard.ssl.devl.csr \
+    -sha256 -out wildcard.ssl.devl.crt -days 3650
+  args:
+    creates: "/usr/local/var/certs/wildcard.ssl.devl.crt"
+    chdir: /usr/local/var/certs
+
+- name: Add ca certificate to keychain
+  become: yes
+  shell: security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /usr/local/var/certs/ca.crt
+
+# add ca to keychain and firefox
+- name: Check Firefox SSL List
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  register: "firefox_ssl_list"
+  command: "cd '~/Library/Application\ Support' && cd Firefox/Profiles/* && /usr/local/opt/nss/bin/certutil -L -d ."
+
+- name: Add Self Signed OpenSSL certificate to firefox
+  shell: /usr/local/opt/nss/bin/certutil -A \
+    -d {{ ansible_env.HOME }}/Library/Application\ Support/Firefox/Profiles/*/. \
+    -t "TCu,Cuw,Tuw" -c "digital" -n 'digital' \
+    -i /usr/local/var/certs/ca.crt
+  when: "'digital' not in firefox_ssl_list.stdout"

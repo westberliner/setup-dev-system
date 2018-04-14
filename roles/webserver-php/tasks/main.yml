@@ -1,141 +1,176 @@
 ---
 # tasks file for webserver-php
 # install packages
-- name: Install brew webserver elements
-  homebrew:
-    name: "{{ item.name | default(item) }}"
-  with_items: "{{ homebrew_installed_packages }}"
+# - name: Install brew webserver elements
+#   homebrew:
+#     name: "{{ item.name | default(item) }}"
+#   with_items: "{{ homebrew_installed_packages }}"
 
-- name: Install brew php versions
-  homebrew:
-    name: "{{ item.name | default(item) }}"
-  with_items: "{{ php_valid_options }}"
+# - name: Install brew php versions
+#   homebrew:
+#     name: "{{ item.name | default(item) }}"
+#   with_items: "{{ php_valid_options }}"
 
-- name: Check brew list
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  register: "brew_list"
-  command: "ls /usr/local/opt"
+# - name: Check brew list
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   register: "brew_list"
+#   command: "ls /usr/local/opt"
 
-- name: mysql secure installation
-  include_tasks: mysql_secure_installation.yml
-  when: mariadb in brew_list.stdout
+# - name: mysql secure installation
+#   include_tasks: mysql_secure_installation.yml
+#   when: mariadb in brew_list.stdout
 
-- name: create php7.2 symlink for more consistency
-  file:
-    src: "/usr/local/opt/php"
-    dest: "/usr/local/opt/php@7.2"
-    state: link
-  when: "'php' in brew_list.stdout"
+# - name: create php7.2 symlink for more consistency
+#   file:
+#     src: "/usr/local/opt/php"
+#     dest: "/usr/local/opt/php@7.2"
+#     state: link
+#   when: "'php' in brew_list.stdout"
 
-# copy shell script for compiling mongo ext
-- name: copy compiling mongo ext script
-  copy:
-    src: buildmongoext.sh
-    dest: "/tmp/."
+# # copy shell script for compiling mongo ext
+# - name: copy compiling mongo ext script
+#   copy:
+#     src: buildmongoext.sh
+#     dest: "/tmp/."
 
-# create htdocs structure
-- name: Create htdocs with test folder
-  file:
-    path: /Users/Shared/www/test
-    state: directory
+# # create htdocs structure
+# - name: Create htdocs with test folder
+#   file:
+#     path: /Users/Shared/www/test
+#     state: directory
 
-- name: Create htdocs with adminer
-  file:
-    path: /Users/Shared/www/adminer
-    state: directory
+# - name: Create htdocs with adminer
+#   file:
+#     path: /Users/Shared/www/adminer
+#     state: directory
 
-- name: Create htdocs with scripts folder
-  file:
-    path: /Users/Shared/scripts
-    state: directory
+# - name: Create htdocs with scripts folder
+#   file:
+#     path: /Users/Shared/scripts
+#     state: directory
 
-# create start/stop scripts
-- name: copy server script
-  copy:
-    src: "{{ item }}"
-    dest: "/Users/Shared/scripts/."
-  with_items: [startserver.sh, stopserver.sh]
+# # create start/stop scripts
+# - name: copy server script
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/Users/Shared/scripts/."
+#   with_items: [startserver.sh, stopserver.sh]
 
 
-# install php packages
-- name: install php extensions
-  include_tasks: php.yml
-  when: item.name in brew_list.stdout
-  loop: "{{ php_valid_options }}"
-  loop_control:
-    loop_var: phpversion
+# # install php packages
+# - name: install php extensions
+#   include_tasks: php.yml
+#   when: item.name in brew_list.stdout
+#   loop: "{{ php_valid_options }}"
+#   loop_control:
+#     loop_var: phpversion
 
-# cleanup
-- name: delete compiling mongo ext script
-  file:
-    state: absent
-    path: "/tmp/buildmongoext.sh"
+# # cleanup
+# - name: delete compiling mongo ext script
+#   file:
+#     state: absent
+#     path: "/tmp/buildmongoext.sh"
 
-# symlink www folder
-- name: create www symlink into homefolder
-  file:
-    src: "/Users/Shared/www"
-    dest: "{{ ansible_env.HOME }}/www"
-    state: link
+# # symlink www folder
+# - name: create www symlink into homefolder
+#   file:
+#     src: "/Users/Shared/www"
+#     dest: "{{ ansible_env.HOME }}/www"
+#     state: link
 
-# add resolver
-- name: Create resolver
-  become: yes
-  file:
-    path: /etc/resolver
-    state: directory
+# # add resolver
+# - name: Create resolver
+#   become: yes
+#   file:
+#     path: /etc/resolver
+#     state: directory
 
-- name: copy compiling mongo ext script
-  become: yes
-  copy:
-    content: "nameserver 127.0.0.1"
-    dest: "/etc/resolver/devl"
+# - name: copy compiling mongo ext script
+#   become: yes
+#   copy:
+#     content: "nameserver 127.0.0.1"
+#     dest: "/etc/resolver/devl"
 
-# add dnsmasq config
-- name: Check dnsmasq config
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  register: "dnsmasqconf"
-  command: bash -c "cat /usr/local/etc/dnsmasq.conf | grep devl"
-  ignore_errors: True
+# # add dnsmasq config
+# - name: Check dnsmasq config
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   register: "dnsmasqconf"
+#   command: bash -c "cat /usr/local/etc/dnsmasq.conf | grep devl"
+#   ignore_errors: True
 
-- name: append devl dns config
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: gsed -i "1iaddress=\/devl\/127\.0\.0\.1" /usr/local/etc/dnsmasq.conf
-  when: "dnsmasqconf.stdout == ''"
+# - name: append devl dns config
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   shell: gsed -i "1iaddress=\/devl\/127\.0\.0\.1" /usr/local/etc/dnsmasq.conf
+#   when: "dnsmasqconf.stdout == ''"
 
-# add apache config
-- name: copy server script
-  copy:
-    src: "{{ item }}"
-    dest: "/usr/local/etc/httpd/extra/."
-  with_items: [httpd-cgi.conf, httpd-vhosts.conf]
+# # add apache config
+# - name: copy server script
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/usr/local/etc/httpd/extra/."
+#   with_items: [httpd-cgi.conf, httpd-vhosts.conf]
 
-- name: copy httpd conf
-  template:
-    src: httpd.conf.j2
-    dest: /usr/local/etc/httpd/httpd.conf
+# - name: copy httpd conf
+#   template:
+#     src: httpd.conf.j2
+#     dest: /usr/local/etc/httpd/httpd.conf
 
-# add adminer
-- name: Download adminer
-  get_url:
-    url: https://www.adminer.org/latest-mysql-en.php
-    dest: /Users/Shared/www/adminer/index.php
-    force_basic_auth: yes
+# # add adminer
+# - name: Download adminer
+#   get_url:
+#     url: https://www.adminer.org/latest-mysql-en.php
+#     dest: /Users/Shared/www/adminer/index.php
+#     force_basic_auth: yes
 
-# add phpinfo to test folder
-- name: create index
-  copy:
-    content: "<?php phpinfo(); ?>"
-    dest: "/Users/Shared/www/test/index.php"
+# # add phpinfo to test folder
+# - name: create index
+#   copy:
+#     content: "<?php phpinfo(); ?>"
+#     dest: "/Users/Shared/www/test/index.php"
 
-- name: add htaccess
-  copy:
-    content: "AddHandler application/php56 .php\n#AddHandler application/php70 .php\n#AddHandler application/php71 .php\n#AddHandler application/php72 .php"
-    dest: "/Users/Shared/www/test/.htaccess"
+# - name: add htaccess
+#   copy:
+#     content: "AddHandler application/php56 .php\n#AddHandler application/php70 .php\n#AddHandler application/php71 .php\n#AddHandler application/php72 .php"
+#     dest: "/Users/Shared/www/test/.htaccess"
 
-# generate ssl
-# add ca to keychain
-# mariadb secure install
+# install ssl cert
+- name: ssl certs
+  include_tasks: ssl.yml
+
+# install commandline tools
+# - name: composer
+#   include_tasks: composer.yml
+
+# - name: drush
+#   include_tasks: drush.yml
+
+# - name: drush9
+#   include_tasks: drush9.yml
+
+# - name: wpcli
+#   include_tasks: wpcli.yml
+
+# - name: start mariadb
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   shell: brew services restart mariadb
+
+# - name: start mongodb
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   shell: brew services restart mongodb
+
+# - name: start httpd
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   become: yes
+#   shell: brew services restart httpd
+
+# - name: start dnsmasq
+#   environment:
+#     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#   become: yes
+#   shell: brew services restart dnsmasq

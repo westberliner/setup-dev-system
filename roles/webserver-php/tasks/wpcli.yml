@@ -1,0 +1,14 @@
+---
+- name: Check if Composer is installed.
+  stat:
+    path: /usr/local/bin/wpcli
+  register: wpcli_bin
+
+- name: Download Composer installer.
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wpcli
+    mode: 0755
+  when: not wpcli_bin.stat.exists
+
+

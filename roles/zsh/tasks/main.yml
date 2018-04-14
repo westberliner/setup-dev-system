@@ -10,6 +10,12 @@
     name: zsh
     state: latest
 
+- name: copy dotfile
+  copy:
+    src: .zshrc
+    dest: "{{ ansible_env.HOME }}/."
+    force: no
+
 - name: install zsh-completions
   homebrew:
     name: zsh-completions

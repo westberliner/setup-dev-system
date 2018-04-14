@@ -1,0 +1,28 @@
+---
+- name: Clone Drush from GitHub.
+  git:
+    repo: https://github.com/drush-ops/drush.git
+    dest: "/usr/local/var/drush"
+    version: "8.x"
+    force: yes
+  register: drush_clone
+
+# See: https://github.com/geerlingguy/ansible-role-drush/issues/6
+- name: Install Drush dependencies with Composer.
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: >
+    composer install
+    chdir=/usr/local/var/drush
+
+- name: Create drush symlink.
+  file:
+    src: "/usr/local/var/drush/drush"
+    dest: "/usr/local/bin/drush"
+    state: link
+    force: yes
+
+- name: Run drush to finish setting it up.
+  command: "/usr/local/var/drush/drush"
+  register: drush_result
+  changed_when: "'Execute a drush command' not in drush_result.stdout"
