@@ -1,0 +1,82 @@
+---
+# tasks file for sublime
+# install sublime text
+- name: Check brew list
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  register: "app_list"
+  command: "ls /Applications"
+
+- name: Ensure configured taps are tapped.
+  homebrew_tap: "tap={{ item }} state=present"
+  with_items: [
+    caskroom/fonts
+  ]
+
+- name: install sublime text 3
+  homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  with_items: [
+    sublime-text,
+    font-sourcecodepro-nerd-font
+  ]
+  when: "'sublime' not in app_list.stdout"
+
+# ensure folder
+- name: create settings dir
+  file:
+    path: "{{ ansible_env.HOME }}/Library/Application Support/Sublime Text 3/Packages/User"
+    state: directory
+
+# copy prefs
+- name: copy prefs
+  copy:
+    src: Preferences.sublime-settings
+    dest: ~/Library/Application Support/Sublime Text 3/Packages/User/.
+    force: no
+
+# ensure subl
+- name: ensure sublime symlink
+  file:
+    src: "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"
+    dest: "/usr/local/bin/subl"
+    state: link
+
+# - name: Download packagemanager
+#   get_url:
+#     url: https://packagecontrol.io/Package%20Control.sublime-package
+#     dest: ~/Library/Application Support/Sublime Text 3/Installed Packages/.
+
+# install packages
+- name: install packages
+  include_role:
+    name: igor_mukhin.sublimetext3_packagecontrol
+  vars:
+    packagecontrol_dir_bin: "~/Library/Application Support/Sublime Text 3/Installed Packages"
+    packagecontrol_dir_cfg: "~/Library/Application Support/Sublime Text 3/Packages/User"
+    packagecontrol_owner: "{{ ansible_env.USER }}"
+    packagecontrol_group: "staff"
+    packagecontrol_packages: [
+      predawn,
+      Docker,
+      Drupal,
+      GenerateUUID,
+      Goto-Drupal-API,
+      GotoDocumentation,
+      wordpress,
+      nginx,
+      php-twig,
+      sass,
+      SublimeLinter,
+      SublimeLinter-jhint,
+      SublimeLinter-php,
+      SublimeLinter-ruby,
+      SublimeLinter-pylint,
+      SublimeLinter-csslint,
+      SublimeLinter-eslint,
+      SublimeLinter-json,
+      Ansible,
+      Monokai Extended (SL).tmTheme
+    ]
+
