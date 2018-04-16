@@ -34,7 +34,7 @@
   copy:
     src: Preferences.sublime-settings
     dest: ~/Library/Application Support/Sublime Text 3/Packages/User/.
-    force: no
+    force: yes
 
 # ensure subl
 - name: ensure sublime symlink
@@ -42,102 +42,6 @@
     src: "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"
     dest: "/usr/local/bin/subl"
     state: link
-
-# - name: Download packagemanager
-#   get_url:
-#     url: https://packagecontrol.io/Package%20Control.sublime-package
-#     dest: ~/Library/Application Support/Sublime Text 3/Installed Packages/.
-
-- name: install packages
-  git:
-    repo: https://github.com/{{ item.repo }}
-    version: master
-    dest: "~/Library/Application Support/Sublime Text 3/Packages/User/{{ item.name }}"
-  with_items: [
-    {
-      repo: jonschlinkert/sublime-monokai-extended.git,
-      name: SublimeLinter/Monokai-Extended
-    },
-    {
-      repo: jamiewilson/predawn.git,
-      name: predawn
-    },
-    {
-      repo: asbjornenge/Docker.tmbundle.git,
-      name: Docker.tmbundle
-    },
-    {
-      repo: robballou/drupal-sublimetext.git,
-      name: Drupal
-    },
-    {
-      repo: SublimeText/GenerateUUID.git,
-      name: GenerateUUID
-    },
-    {
-      repo: BrianGilbert/Sublime-Text-2-Goto-Drupal-API.git,
-      name: GotoDocumentation
-    },
-    {
-      repo: purplefish32/sublime-text-2-wordpress.git,
-      name: Wordpress
-    },
-    {
-      repo: brandonwamboldt/sublime-nginx.git,
-      name: nginx
-    },
-    {
-      repo: Anomareh/PHP-Twig.tmbundle.git,
-      name: PHP-Twig.tmbundle
-    },
-    {
-      repo: P233/Syntax-highlighting-for-Sass.git,
-      name: Sass
-    },
-    {
-      repo: SublimeLinter/SublimeLinter.git,
-      name: SublimeLinter
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-jshint.git,
-      name: SublimeLinter-jshint
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-php.git,
-      name: SublimeLinter-php
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-ruby.git,
-      name: SublimeLinter-ruby
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-pylint.git,
-      name: SublimeLinter-pylint
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-csslint.git,
-      name: SublimeLinter-csslint
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-eslint.git,
-      name: SublimeLinter-eslint
-    },
-    {
-      repo: SublimeLinter/SublimeLinter-json.git,
-      name: SublimeLinter-json
-    },
-    {
-      repo: clifford-github/sublime-ansible.git,
-      name: ansible
-    },
-    {
-      repo: buymeasoda/soda-theme.git,
-      name: "Theme - Soda"
-
-    }
-
-  ]
-
 
 # install packages
 - name: install packages
@@ -153,6 +57,7 @@
       "Dockerfile Syntax Highlighting",
       "Drupal",
       "GenerateUUID",
+      "Goto Drupal API",
       "GotoDocumentation",
       "Wordpress",
       "nginx",
@@ -169,6 +74,8 @@
       "Ansible",
       "Package Control",
       "Theme - Soda",
-      "Theme - Soda SolarizedDark"
+      "Theme - Soda SolarizedDark",
+      "Monokai Extended",
+      "Monokai Neue"
     ]
 

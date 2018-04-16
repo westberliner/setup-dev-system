@@ -47,6 +47,6 @@
     - {
       role: webserver-php
     }
-    # - {
-    #   role: sublime
-    # }
+    - {
+      role: sublime
+    }
