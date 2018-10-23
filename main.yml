@@ -8,15 +8,18 @@
         { name: node },
         { name: wget },
         { name: nmap },
-        { name: ansible }
+        { name: ansible },
+        { name: cmake }
       ],
       homebrew_taps: [
         kabel/php-ext,
+        homebrew/cask
       ],
       homebrew_cask_apps: [
         docker,
         virtualbox,
-        virtualbox-extension-pack
+        virtualbox-extension-pack,
+        phantomjs
       ]
     }
     - zsh
@@ -32,16 +35,20 @@
     - {
       role: web-tools,
       brew_packages: [
-        { name: phantomjs }
+        composer
       ],
       npm_packages: [
-        { name: grunt }
+        { name: grunt },
+        { name: grunt-cli },
+        { name: gulp },
+        { name: gulp-cli }
       ],
       gem_packages: [
         { name: bundler },
         { name: sass }
       ],
-      composer_packages: {},
+      composer_packages: {
+      },
       pip_packages: {}
     }
     - {

@@ -18,7 +18,6 @@ php_valid_options: [
     shortname: '56',
     version: '5.6',
     extensions: [
-      { name: pecl_http-2.6.0 },
       { name: APCu-4.0.11 },
       { name: uploadprogress },
       { name: xdebug-2.5.5 },
@@ -30,8 +29,6 @@ php_valid_options: [
     shortname: '70',
     version: '7.0',
     extensions: [
-      { name: pecl_http },
-      { name: uploadprogress },
       { name: xdebug },
       { name: yaml }
     ]
@@ -41,8 +38,6 @@ php_valid_options: [
     shortname: '71',
     version: '7.1',
     extensions: [
-      { name: pecl_http },
-      { name: uploadprogress },
       { name: xdebug },
       { name: yaml }
     ]
@@ -52,8 +47,6 @@ php_valid_options: [
     shortname: '72',
     version: '7.2',
     extensions: [
-      { name: pecl_http },
-      { name: uploadprogress },
       { name: xdebug },
       { name: yaml }
     ]

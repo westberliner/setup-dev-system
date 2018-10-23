@@ -150,6 +150,9 @@
 - name: drush9
   include_tasks: drush9.yml
 
+- name: drupal console
+  include_tasks: drupal.yml
+
 - name: wpcli
   include_tasks: wpcli.yml
 

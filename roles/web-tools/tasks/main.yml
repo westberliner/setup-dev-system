@@ -45,6 +45,8 @@
   with_items: "{{ pip_packages }}"
 
 - name: Install global Ruby gems.
+  environment:
+    PATH: '/usr/local/bin:{{ ansible_env.PATH }}'
   gem:
     name: "{{ item.name | default(item) }}"
     state: "{{ item.state | default('present') }}"

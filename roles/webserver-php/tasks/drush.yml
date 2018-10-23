@@ -2,7 +2,7 @@
 - name: Clone Drush from GitHub.
   git:
     repo: https://github.com/drush-ops/drush.git
-    dest: "/usr/local/var/drush"
+    dest: "/usr/local/var/drush8"
     version: "8.x"
     force: yes
   register: drush_clone
@@ -11,18 +11,27 @@
 - name: Install Drush dependencies with Composer.
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-  shell: >
-    composer install
-    chdir=/usr/local/var/drush
+  shell: composer install
+  args:
+    chdir: /usr/local/var/drush8
 
 - name: Create drush symlink.
   file:
-    src: "/usr/local/var/drush/drush"
-    dest: "/usr/local/bin/drush"
+    src: "/usr/local/var/drush8/drush"
+    dest: "/usr/local/bin/drush8"
     state: link
     force: yes
 
 - name: Run drush to finish setting it up.
-  command: "/usr/local/var/drush/drush"
+  command: "/usr/local/var/drush8/drush"
   register: drush_result
   changed_when: "'Execute a drush command' not in drush_result.stdout"
+
+# add alias for diffrent phpversion
+- name: Install Drush dependencies with Composer.
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: >
+    echo 'alias drush56="DRUSH_PHP=php56 drush8"' >> ~/bash_profile && \
+    echo 'alias drush70="DRUSH_PHP=php70 drush8"' >> ~/bash_profile && \
+    echo 'alias drush71="DRUSH_PHP=php71 drush8"' >> ~/bash_profile

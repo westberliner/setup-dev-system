@@ -1,0 +1,14 @@
+---
+- name: Check if drupal console is installed.
+  stat:
+    path: /usr/local/bin/drupal
+  register: drupal_bin
+
+- name: Download drupal console.
+  get_url:
+    url: https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.8.0/drupal.phar
+    dest: /usr/local/bin/drupal
+    mode: 0755
+  when: not drupal_bin.stat.exists
+
+
