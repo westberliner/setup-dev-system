@@ -32,6 +32,9 @@
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   shell: >
-    echo 'alias drush56="DRUSH_PHP=php56 drush8"' >> ~/bash_profile && \
-    echo 'alias drush70="DRUSH_PHP=php70 drush8"' >> ~/bash_profile && \
-    echo 'alias drush71="DRUSH_PHP=php71 drush8"' >> ~/bash_profile
+    echo 'alias drush56="DRUSH_PHP=php56 drush8"' >> ~/.bash_profile && \
+    echo 'alias drush70="DRUSH_PHP=php70 drush8"' >> ~/.bash_profile && \
+    echo 'alias drush71="DRUSH_PHP=php71 drush8"' >> ~/.bash_profile && \
+    echo 'alias drush56="DRUSH_PHP=php56 drush8"' >> ~/.zshrc && \
+    echo 'alias drush70="DRUSH_PHP=php70 drush8"' >> ~/.zshrc && \
+    echo 'alias drush71="DRUSH_PHP=php71 drush8"' >> ~/.zshrc

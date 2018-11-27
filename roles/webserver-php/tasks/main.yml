@@ -150,6 +150,12 @@
 - name: drush9
   include_tasks: drush9.yml
 
+- name: phpcs
+  include_tasks: phpcs.yml
+
+- name: robo
+  include_tasks: robo.yml
+
 - name: drupal console
   include_tasks: drupal.yml
 

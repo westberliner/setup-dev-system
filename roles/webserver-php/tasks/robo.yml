@@ -1,0 +1,12 @@
+---
+- name: Check if robo is installed.
+  stat:
+    path: /usr/local/bin/robo
+  register: robo_bin
+
+- name: Download robo.
+  get_url:
+    url: https://robo.li/robo.phar
+    dest: /usr/local/bin/robo
+    mode: 0755
+  when: not robo_bin.stat.exists

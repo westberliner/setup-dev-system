@@ -9,7 +9,9 @@
         { name: wget },
         { name: nmap },
         { name: ansible },
-        { name: cmake }
+        { name: cmake },
+        { name: doxygen },
+        { name: graphviz }
       ],
       homebrew_taps: [
         kabel/php-ext,
@@ -33,10 +35,11 @@
       ]
     }
     - {
+      role: webserver-php
+    }
+    - {
       role: web-tools,
-      brew_packages: [
-        composer
-      ],
+      brew_packages: [],
       npm_packages: [
         { name: grunt },
         { name: grunt-cli },
@@ -48,11 +51,9 @@
         { name: sass }
       ],
       composer_packages: {
+        name: hirak/prestissimo
       },
       pip_packages: {}
-    }
-    - {
-      role: webserver-php
     }
     - {
       role: sublime

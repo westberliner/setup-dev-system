@@ -36,3 +36,11 @@
   register: composer_update
   changed_when: "'Updating to version' in composer_update.stdout"
 
+# add alias for diffrent phpversion
+- name: Define Composer home
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  shell: >
+    mkdir -p /usr/local/var/composer && \
+    echo 'export COMPOSER_HOME=/usr/local/var/composer' >> ~/.bash_profile && \
+    echo 'export COMPOSER_HOME=/usr/local/var/composer' >> ~/.zshrc

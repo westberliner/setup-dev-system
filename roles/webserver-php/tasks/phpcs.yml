@@ -1,0 +1,24 @@
+---
+- name: Check if phpcs is installed.
+  stat:
+    path: /usr/local/bin/phpcs
+  register: phpcs_bin
+
+- name: Download phpcs.
+  get_url:
+    url: https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+    dest: /usr/local/bin/phpcs
+    mode: 0755
+  when: not phpcs_bin.stat.exists
+
+- name: Check if phpcbf is installed.
+  stat:
+    path: /usr/local/bin/phpcbf
+  register: phpcbf_bin
+
+- name: Download phpcbf.
+  get_url:
+    url: https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar
+    dest: /usr/local/bin/phpcbf
+    mode: 0755
+  when: not phpcbf_bin.stat.exists
